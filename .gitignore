@@ -1,0 +1,57 @@
+# =========================
+# PYTHON
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.env/
+.env
+
+# =========================
+# DJANGO
+# =========================
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+
+# migrations (opcional - cuidado se já estiver versionando)
+# */migrations/*
+# !*/migrations/__init__.py
+
+# =========================
+# TESTES / PYTEST
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# VS CODE / IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# SISTEMA OPERACIONAL
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# SEGURANÇA
+# =========================
+.env
+*.env
+.env.*
+
+# =========================
+# BUILD / CACHE
+# =========================
+*.egg-info/
+dist/
+build/
