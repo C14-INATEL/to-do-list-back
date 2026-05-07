@@ -45,7 +45,7 @@ class TestUserWithMock:
             assert response.status_code == status.HTTP_400_BAD_REQUEST
             assert response.data == {"email": ["Enter a valid email address."]}
 
-    def test_create_user_successfully_creates_user():
+    def test_create_user_successfully_creates_user(self):
         with patch("app.services.user_service.User.objects.filter") as mock_filter, \
             patch("app.services.user_service.User.objects.create_user") as mock_create:
 
@@ -72,7 +72,7 @@ class TestUserWithMock:
             # Verifica retorno
             assert result == mock_user
 
-    def test_get_user_by_id_returns_user_when_found():
+    def test_get_user_by_id_returns_user_when_found(self):
         with patch("app.services.user_service.User.objects.get") as mock_get:
 
             mock_user = Mock(id=1, email="bianca@email.com")
