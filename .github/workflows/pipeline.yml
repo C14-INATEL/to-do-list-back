@@ -73,3 +73,25 @@ jobs:
 
       - name: Django Migrate Check
         run: python backend/manage.py makemigrations --check --dry-run
+
+  simulate-deploy:
+    name: Simulação de Deploy e Notificação
+    needs: build-and-validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulando o processo de Deploy
+        run: |
+          echo "🚀 Iniciando simulação de deploy..."
+          echo "✅ Conectando aos servidores..."
+          sleep 2
+          echo "✅ Transferindo artefatos..."
+          sleep 2
+          echo "🎉 Deploy concluído com sucesso no ambiente de Homologação/Produção!"
+
+      - name: Notificação de Sucesso
+        if: success()
+        run: echo "✅ A pipeline foi executada completamente com sucesso!"
+
+      - name: Notificação de Falha
+        if: failure()
+        run: echo "❌ Alguma etapa da pipeline falhou. Verifique os logs."
