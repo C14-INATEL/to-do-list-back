@@ -18,8 +18,13 @@ setup-and-install:
   stage: setup
   image: python:3.12
   script:
+    - python -m venv venv
+    - source venv/bin/activate
     - python -m pip install --upgrade pip
     - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - venv/
   only:
     - main
     - master
@@ -29,26 +34,30 @@ run-tests:
   stage: test
   image: python:3.12
   script:
-    - pip install -r requirements.txt
-    - pip install pytest pytest-django
-    - cd backend
+    - source venv/bin/activate
     - pytest
+  working_dir: backend/
   only:
     - main
     - master
     - merge_requests
+  needs:
+    - setup-and-install
 
 build-and-validate:
   stage: build
   image: python:3.12
   script:
-    - pip install -r requirements.txt
-    - python backend/manage.py check
-    - python backend/manage.py makemigrations --check --dry-run
+    - source venv/bin/activate
+    - python manage.py check
+    - python manage.py makemigrations --check --dry-run
+  working_dir: backend/
   only:
     - main
     - master
     - merge_requests
+  needs:
+    - setup-and-install
 
 simulate-deploy:
   stage: deploy
