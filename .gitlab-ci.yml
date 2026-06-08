@@ -60,7 +60,7 @@ simulate-deploy:
     - sleep 2
     - echo "✅ Transferindo artefatos..."
     - sleep 2
-    - echo "🎉 Deploy concluído com sucesso no ambiente de Homologação/Produção!"
+    - echo "🎉 Deploy concluído com sucesso no ambiente de Homologação/Produção! 🔥"
   after_script:
     - |
       if [ "$CI_JOB_STATUS" == "success" ]; then
