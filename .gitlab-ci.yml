@@ -1,0 +1,74 @@
+# .gitlab-ci.yml
+
+stages:
+  - setup
+  - test
+  - build
+  - deploy
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  PYTHON_VERSION: "3.12"
+
+cache:
+  paths:
+    - .cache/pip
+
+setup-and-install:
+  stage: setup
+  image: python:3.12
+  script:
+    - python -m pip install --upgrade pip
+    - pip install -r requirements.txt
+  only:
+    - main
+    - master
+    - merge_requests
+
+run-tests:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install -r requirements.txt
+    - pip install pytest pytest-django
+    - cd backend
+    - pytest
+  only:
+    - main
+    - master
+    - merge_requests
+
+build-and-validate:
+  stage: build
+  image: python:3.12
+  script:
+    - pip install -r requirements.txt
+    - python backend/manage.py check
+    - python backend/manage.py makemigrations --check --dry-run
+  only:
+    - main
+    - master
+    - merge_requests
+
+simulate-deploy:
+  stage: deploy
+  image: python:3.12
+  script:
+    - echo "🚀 Iniciando simulação de deploy..."
+    - echo "✅ Conectando aos servidores..."
+    - sleep 2
+    - echo "✅ Transferindo artefatos..."
+    - sleep 2
+    - echo "🎉 Deploy concluído com sucesso no ambiente de Homologação/Produção!"
+  after_script:
+    - |
+      if [ "$CI_JOB_STATUS" == "success" ]; then
+        echo "✅ A pipeline foi executada completamente com sucesso!"
+      else
+        echo "❌ Alguma etapa da pipeline falhou. Verifique os logs."
+      fi
+  only:
+    - main
+    - master
+  needs:
+    - build-and-validate
