@@ -49,6 +49,7 @@ jobs:
 
       - name: Run Pytest
         run: |
+          cd backend
           pytest
 
   build-and-validate:
