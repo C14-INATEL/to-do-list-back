@@ -37,6 +37,35 @@ run-tests:
   needs:
     - setup-and-install
 
+coverage-report:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install -r requirements.txt
+    - cd backend
+    - coverage run -m pytest
+    - coverage report
+  only:
+    - main
+    - master
+    - merge_requests
+  needs:
+    - setup-and-install
+
+lint-code:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install -r requirements.txt
+    - echo "Verificando qualidade do código..."
+    - flake8 .
+  only:
+    - main
+    - master
+    - merge_requests
+  needs:
+    - setup-and-install
+
 build-and-validate:
   stage: build
   image: python:3.12
@@ -50,6 +79,8 @@ build-and-validate:
     - merge_requests
   needs:
     - run-tests
+    - coverage-report
+    - lint-code
 
 simulate-deploy:
   stage: deploy
