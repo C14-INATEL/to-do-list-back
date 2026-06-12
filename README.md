@@ -265,7 +265,7 @@ Abaixo estão descritas as principais Histórias de Usuário que guiaram o desen
 
 O uso de ferramentas de IA no desenvolvimento deste projeto foi transparente e seguiu as seguintes diretrizes:
 
-* **Modelos Utilizados:** [Ex: ChatGPT, Gemini Pro, Claude 3.5 Sonnet, GitHub Copilot]
+* **Modelos Utilizados:** [Claude 3.5 Sonnet, Gemini]
 * **Finalidades de Uso:** Geração da estrutura de documentação (README), geração de esqueleto de código, refatoração de funções, automação de testes unitários com pytest, auxílio em debugging de ambiente.
 * **Exemplos de Prompts:**
   1. *Prompt:*
@@ -274,9 +274,5 @@ O uso de ferramentas de IA no desenvolvimento deste projeto foi transparente e s
      Sua tarefa é criar um arquivo README.md completo, profissional e altamente escaneável para o meu projeto. O README completo deve satisfazer: instalação, execução, uso e funcionalidades...
      ```
      *Resultado:* **Aceito**. Serviu de esqueleto base para a documentação inicial do projeto (README.md).
-  2. *Prompt:* "[Copie exatamente um segundo prompt utilizado pelo grupo]" 
-     *Resultado:* [Aceito / Ajustado / Descartado]
-  3. *Prompt:* "[Copie exatamente um terceiro prompt utilizado pelo grupo]" 
-     *Resultado:* [Aceito / Ajustado / Descartado]
-* **Dinâmica de Uso:** [Como a IA foi integrada no dia a dia. Ex: Utilizada individualmente pelos desenvolvedores, em pair programming ou para acelerar a escrita de testes no pytest]
-* **Desenvolvimento Manual:** [O que foi implementado "à mão" sem suporte direto de IA. Ex: Modelagem de banco de dados, regras específicas de autenticação por JWT no DRF]
+
+* **Dinâmica de Uso:** [Como a IA foi integrada no dia a dia. Ex: Utilizada individualmente pelos desenvolvedores, em pair programming ou para acelerar a escrita de códigos manuais com o github copilot autocomplete, acelera o desenvolvimento e nos traz resultados mais rápidos]
