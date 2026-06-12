@@ -276,3 +276,6 @@ O uso de ferramentas de IA no desenvolvimento deste projeto foi transparente e s
      *Resultado:* **Aceito**. Serviu de esqueleto base para a documentação inicial do projeto (README.md).
 
 * **Dinâmica de Uso:** [Como a IA foi integrada no dia a dia. Ex: Utilizada individualmente pelos desenvolvedores, em pair programming ou para acelerar a escrita de códigos manuais com o github copilot autocomplete, acelera o desenvolvimento e nos traz resultados mais rápidos]
+
+* **Resultado Pipeline**
+![alt text](image.png)
