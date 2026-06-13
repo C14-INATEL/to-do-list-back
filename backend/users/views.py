@@ -6,8 +6,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, OpenApiResponse
-from .serializers import UserSerializer, NoteSerializer
-from .models import Note
+from .serializers import UserSerializer, NoteSerializer, ActivityLogSerializer
+from .models import ActivityLog
+from app.services import note_service
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -43,61 +44,84 @@ class NoteListCreateView(APIView):
 
     @extend_schema(responses=NoteSerializer(many=True))
     def get(self, request):
-        notes = Note.objects.filter(user=request.user)
-        serializer = NoteSerializer(notes, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        notes = note_service.get_notes(request.user)
+        return Response(NoteSerializer(notes, many=True).data, status=status.HTTP_200_OK)
 
     @extend_schema(request=NoteSerializer, responses=NoteSerializer)
     def post(self, request):
         serializer = NoteSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            note = note_service.create_note(request.user, serializer)
+            return Response(NoteSerializer(note).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class NoteDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, pk, user):
-        try:
-            return Note.objects.get(pk=pk, user=user)
-        except Note.DoesNotExist:
-            return None
-
     @extend_schema(responses=NoteSerializer)
     def get(self, request, pk):
-        note = self.get_object(pk, request.user)
+        note = note_service.get_note_by_id(pk, request.user)
         if not note:
             return Response({'error': 'Nota não encontrada'}, status=status.HTTP_404_NOT_FOUND)
         return Response(NoteSerializer(note).data)
 
     @extend_schema(request=NoteSerializer, responses=NoteSerializer)
     def put(self, request, pk):
-        note = self.get_object(pk, request.user)
+        note = note_service.get_note_by_id(pk, request.user)
         if not note:
             return Response({'error': 'Nota não encontrada'}, status=status.HTTP_404_NOT_FOUND)
         serializer = NoteSerializer(note, data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            note = note_service.update_note(note, serializer)
+            return Response(NoteSerializer(note).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(request=NoteSerializer, responses=NoteSerializer)
     def patch(self, request, pk):
-        note = self.get_object(pk, request.user)
+        note = note_service.get_note_by_id(pk, request.user)
         if not note:
             return Response({'error': 'Nota não encontrada'}, status=status.HTTP_404_NOT_FOUND)
         serializer = NoteSerializer(note, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            note = note_service.update_note(note, serializer)
+            return Response(NoteSerializer(note).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(responses=OpenApiResponse(description='Nota deletada com sucesso'))
     def delete(self, request, pk):
-        note = self.get_object(pk, request.user)
+        note = note_service.get_note_by_id(pk, request.user)
         if not note:
             return Response({'error': 'Nota não encontrada'}, status=status.HTTP_404_NOT_FOUND)
-        note.delete()
+        note_service.delete_note(note)
         return Response({'message': 'Nota deletada com sucesso'}, status=status.HTTP_204_NO_CONTENT)
+
+
+class NoteDeletedListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses=NoteSerializer(many=True))
+    def get(self, request):
+        notes = note_service.get_deleted_notes(request.user)
+        return Response(NoteSerializer(notes, many=True).data, status=status.HTTP_200_OK)
+
+
+class NoteRestoreView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(request=None, responses=NoteSerializer)
+    def post(self, request, pk):
+        note = note_service.get_deleted_note_by_id(pk, request.user)
+        if not note:
+            return Response({'error': 'Nota não encontrada na lixeira'}, status=status.HTTP_404_NOT_FOUND)
+        note_service.restore_note(note)
+        return Response(NoteSerializer(note).data, status=status.HTTP_200_OK)
+
+
+class ActivityLogView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses=ActivityLogSerializer(many=True))
+    def get(self, request):
+        logs = ActivityLog.objects.filter(user=request.user)
+        return Response(ActivityLogSerializer(logs, many=True).data, status=status.HTTP_200_OK)
