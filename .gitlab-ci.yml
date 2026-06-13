@@ -66,6 +66,22 @@ lint-code:
   needs:
     - setup-and-install
 
+validate-api-docs:
+  stage: test
+  image: python:3.12
+  script:
+    - pip install -r requirements.txt
+    - echo "Validando geração do schema OpenAPI (Swagger)..."
+    - cd backend
+    - python manage.py spectacular --validate --fail-on-warn
+    - echo "Schema gerado e validado com sucesso."
+  only:
+    - main
+    - master
+    - merge_requests
+  needs:
+    - setup-and-install
+
 build-and-validate:
   stage: build
   image: python:3.12
@@ -81,6 +97,7 @@ build-and-validate:
     - run-tests
     - coverage-report
     - lint-code
+    - validate-api-docs
 
 simulate-deploy:
   stage: deploy
